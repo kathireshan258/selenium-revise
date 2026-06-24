@@ -234,6 +234,11 @@ class TakeScreenshot {
         }
     }
 
+    private static void partialScreenShot(WebElement element, String dest) {
+        File src = element.getScreenshotAs(OutputType.FILE);
+        File destFile = new File(System.getProperty("user.dir") + "target/screenshots/" + dest);
+    }
+
     private static void initBrowser(Drivers _driver) {
         switch (_driver) {
             case Edge -> driver = new EdgeDriver();
