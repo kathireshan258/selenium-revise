@@ -15,7 +15,7 @@ public class StringBuffer {
     System.out.printf(buffer + "%n");
 
     System.out.printf("His name was john and he is a man".replace("is", "was")+"%n");
-    "".subSequence(0,1);
+//    "".subSequence(0,1);
 
 
 

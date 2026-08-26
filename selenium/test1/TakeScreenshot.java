@@ -8,6 +8,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -236,7 +238,37 @@ class TakeScreenshot {
 
     private static void partialScreenShot(WebElement element, String dest) {
         File src = element.getScreenshotAs(OutputType.FILE);
-        File destFile = new File(System.getProperty("user.dir") + "target/screenshots/" + dest);
+        File destFile = new File(System.getProperty("user.dir") + "/target/screenshots/" + dest);
+        try {
+            Files.copy(src.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void legacyPartialScreenShot(WebElement element, String dest) {
+        // Get entire page screenshot
+        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        BufferedImage fullImg;
+        try {
+            fullImg = ImageIO.read(src);
+
+            // Get the element location
+            Point point = element.getLocation();
+
+            // Get the width and height of the element
+            int eleWidth = element.getSize().getWidth();
+            int eleHeight = element.getSize().getHeight();
+
+            // Crop the entire page to get only the element screenshot
+            BufferedImage eleImg = fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
+            File destFile = new File (System.getProperty("user.dir") + "/target/screenshots/"+dest);
+
+            // Write the cropped screenshot directly to destination file
+            ImageIO.write(eleImg, "png", destFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void initBrowser(Drivers _driver) {
