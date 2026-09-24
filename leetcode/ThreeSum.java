@@ -55,5 +55,51 @@ package leetcode;
  * Order of numbers inside a triplet does not matter.
  * */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
+
 class ThreeSum {
+    static void main (String[] args) {
+        int[] arr = {-2, 0, 0, 2, 2};
+        List<List<Integer>> result = threeSum(arr);
+        printResult(result, arr);
+        arr = new int[] {-4, -1, -1, 0, 1, 2};
+        result = threeSum(arr);
+        printResult(result, arr);
+    }
+    private static void printResult(List<List<Integer>> result, int[] nums) {
+//        System.out.println("Results for " + Arrays.deepToString(result.toArray()));
+        System.out.println("Results for " + Arrays.toString(nums));
+        for (List<Integer> list : result) {
+            System.out.println(Arrays.toString(list.toArray()));
+        }
+    }
+
+    private static List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 2; i++) {
+            // skip duplicate 'a'
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            int target = -nums[i];
+            int left = i + 1, right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[left] + nums[right];
+                if (sum < target) {
+                    left++;
+                } else if (sum > target) {
+                    right--;
+                } else {
+                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    left++; right--;
+                    // skip duplicate left values
+                    while (left < right && nums[left] == nums[left - 1]) left++;
+                    // skip duplicate right values
+                    while (left < right && nums[right] == nums[right + 1]) right--;
+                }
+            }
+        }
+        return result;
+    }
 }
