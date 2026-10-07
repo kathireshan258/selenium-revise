@@ -47,25 +47,42 @@ package leetcode;
  * Need count, not the actual subarray
  * */
 
-class SubArraySumK {
-}
+import java.util.Map;
+import java.util.HashMap;
 
-/**
- * Discovery Chain:
- * Subarray sum = CurrentPrefix - PreviousPrefix
- * We want
- * Subarray = k
- * therefore
- * CurrentPrefix - PreviousPrefix = k
- * PreviousPrefix = CurrentPrefix - k
- *
- * Which means
- * for every position CurrentPrefix
- * we ask
- * have I already seen (CurrentPrefix - k)
- * if yes
- * A valid subarray exists.
- * if it appeared multiple times:
- * multiple valid subarray exist.
- * HashMap<PrefixSum, Frequency>
- * */
+class SubArraySumK {
+    static void main(String[] args) {
+        // Test with your favorite example
+        int[] nums = {4, 2, 1, 3};
+        int target = 3;
+        System.out.println("Total Subarrays: " + subArraySum(nums, target)); // Output: 1
+    }
+
+    private static int subArraySum(int[] nums, int target) {
+        // 1. Initialize our historical memory map
+        Map<Integer, Integer> prefixSums = new HashMap<>();
+        prefixSums.put(0, 1); // Ground truth: a prefix sum of 0 has appeared 1 time
+
+        int currentPrefix = 0;
+        int numOfSubArr = 0;
+
+        // 2. Walk through the array from left to right
+        for (int i = 0; i < nums.length; i++) {
+            // Update our current running position total
+            currentPrefix += nums[i];
+
+            // Calculate the exact target chop-point we need from the past
+            int previousPrefix = currentPrefix - target;
+
+            // 3. Counting Logic: If our chop-point exists in history, add its frequency
+            if (prefixSums.containsKey(previousPrefix)) {
+                numOfSubArr += prefixSums.get(previousPrefix);
+            }
+
+            // 4. Recording Logic: Blindly save our current position for the future
+            prefixSums.put(currentPrefix, prefixSums.getOrDefault(currentPrefix, 0) + 1);
+        }
+
+        return numOfSubArr;
+    }
+}
